@@ -30,7 +30,7 @@ import reactor.core.publisher.Flux;
  * @author mkarki
  */
 @RestController
-@RequestMapping("/stock/transaction")
+@RequestMapping("/stock/tx")
 public class AppController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AppController.class);
 

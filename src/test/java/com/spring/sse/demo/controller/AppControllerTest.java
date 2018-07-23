@@ -39,7 +39,7 @@ public class AppControllerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		this.base = new URL("http://localhost:" + port + "/stock/transaction/");
+		this.base = new URL("http://localhost:" + port + "/stock/tx/");
 
 	}
 
