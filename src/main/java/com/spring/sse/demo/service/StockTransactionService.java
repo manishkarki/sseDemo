@@ -8,11 +8,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
-import com.spring.sse.demo.com.spring.sse.demo.model.Stock;
-import com.spring.sse.demo.com.spring.sse.demo.model.StockTransaction;
+import com.spring.sse.demo.model.Message;
+import com.spring.sse.demo.model.Stock;
+import com.spring.sse.demo.model.StockTransaction;
+import com.spring.sse.demo.repository.MessageRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.util.function.Tuple2;
@@ -22,6 +25,10 @@ import reactor.util.function.Tuple2;
  */
 @Service
 public class StockTransactionService implements CommandLineRunner {
+
+	@Autowired
+	private MessageRepository messageRepository;
+
 	private List<Stock> stockList = new ArrayList<>();
 	private List<String> stockNames = Arrays.asList("mango,banana,guava,infinity".split(","));
 
@@ -31,7 +38,8 @@ public class StockTransactionService implements CommandLineRunner {
 
 		Flux<StockTransaction> stockTransactionFlux = Flux.fromStream(
 				Stream.generate(() -> new StockTransaction(getRandomUser(), getRandomStock(), new Date())));
-		return Flux.zip(interval, stockTransactionFlux).map(Tuple2::getT2);
+		return Flux.zip(interval, stockTransactionFlux)
+				.map(Tuple2::getT2);
 	}
 
 	@Override
@@ -41,9 +49,7 @@ public class StockTransactionService implements CommandLineRunner {
 	}
 
 	public void createRandomStock() {
-		stockNames.forEach(stockName -> {
-			stockList.add(new Stock(stockName, generateRandomStockPrice()));
-		});
+		stockNames.forEach(stockName -> stockList.add(new Stock(stockName, generateRandomStockPrice())));
 	}
 
 	public float generateRandomStockPrice () {
@@ -67,5 +73,9 @@ public class StockTransactionService implements CommandLineRunner {
 
 	public float roundFloat(float number) {
 		return Math.round(number * 100.0) / 100.0f;
+	}
+
+	public Flux<Message> save(Message m) {
+		return messageRepository.saveAll(new ArrayList<Message>(){{add(m);}});
 	}
 }

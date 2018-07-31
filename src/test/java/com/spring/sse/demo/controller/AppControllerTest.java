@@ -7,6 +7,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import java.net.URL;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import com.spring.sse.demo.com.spring.sse.demo.model.Message;
+import com.spring.sse.demo.model.Message;
 
 /**
  * @author mkarki
@@ -58,7 +60,20 @@ public class AppControllerTest {
 		ResponseEntity<Message> response = template.postForEntity(createURLWithPort("chat"),
 				httpEntity, Message.class);
 		assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-		assertThat(response.getBody().getFrom(), is("manish"));
+		assertThat(response.getBody().getSender(), is("manish"));
+	}
+
+	@Test
+	@Ignore
+	public void testGetMessage() {
+//		byte[] array = new byte[7]; // length is bounded by 7
+//		byte[] arrayMessage = new byte[14];
+//		new Random().nextBytes(array);
+//		String from = new String(array, Charset.forName("UTF-8"));
+//		String message = new String(array, Charset.forName("UTF-8"));
+
+		ResponseEntity<SseEmitter> response = template.getForEntity(createURLWithPort("messages"),
+				SseEmitter.class);
 	}
 
 	private String createURLWithPort(@Nullable String uri) {
